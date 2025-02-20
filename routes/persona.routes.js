@@ -1,13 +1,15 @@
 const express = require('express');
-const PersonaController = require('../controllers/persona.controller.js'); // No changes needed
+const PersonaController = require('../controllers/persona.controller.js');
 const router = express.Router();
 
+// Rutas explícitas para cada tipo de búsqueda
 router.get('/personas', PersonaController.getAllPersonas);
-router.get('/personas/:rfc', PersonaController.getPersonaByRFC);
-router.get('/personas/:email', PersonaController.getPersonaByEmail);
-router.get('/personas/:id', PersonaController.getPersonaById);
+router.get('/personas/id/:id', PersonaController.getPersonaById);
+router.get('/personas/rfc/:rfc', PersonaController.getPersonaByRFC);
+router.get('/personas/email/:email', PersonaController.getPersonaByEmail);
+
 router.post('/personas', PersonaController.createPersona);
-router.put('/personas/:id', PersonaController.updatePersona);
-router.delete('/personas/:id', PersonaController.deletePersona);
+router.put('/personas/id/:id', PersonaController.updatePersona);
+router.delete('/personas/id/:id', PersonaController.deletePersona);
 
 module.exports = router;

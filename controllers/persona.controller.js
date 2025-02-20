@@ -20,6 +20,7 @@ class PersonaController {
   }
   async getPersonaByRFC(req, res) {
     const { rfc } = req.params;
+    
     try {
       const persona = await PersonaService.getPersonaByRFC(rfc);
       res.status(200).json(persona);
