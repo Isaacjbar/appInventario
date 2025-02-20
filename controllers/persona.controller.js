@@ -59,6 +59,34 @@ class PersonaController {
           .json({ message: "El RFC ya está registrado." });
       }
 
+      // Validación: La fecha de nacimiento es requerida y debe ser un Date válido
+      if (!persona.fechaNacimiento) {
+        return res
+          .status(400)
+          .json({ message: "La fecha de nacimiento es requerida." });
+      }
+      const birthDate = new Date(persona.fechaNacimiento);
+      if (isNaN(birthDate.getTime())) {
+        return res
+          .status(400)
+          .json({ message: "Formato de fecha de nacimiento no válido." });
+      }
+      // Cálculo de la edad
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      if (age <= 19) {
+        return res
+          .status(400)
+          .json({ message: "La edad debe ser mayor a 19 años." });
+      }
+
       const newPersona = await PersonaService.createPersona(persona);
       res.status(201).json(newPersona);
     } catch (error) {
@@ -87,6 +115,30 @@ class PersonaController {
           return res
             .status(409)
             .json({ message: "El RFC ya está registrado." });
+        }
+      }
+
+      // Validación: Si se actualiza la fecha de nacimiento, debe ser un Date válido y la edad debe ser mayor a 19
+      if (persona.fechaNacimiento) {
+        const birthDate = new Date(persona.fechaNacimiento);
+        if (isNaN(birthDate.getTime())) {
+          return res
+            .status(400)
+            .json({ message: "Formato de fecha de nacimiento no válido." });
+        }
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+        if (age <= 19) {
+          return res
+            .status(400)
+            .json({ message: "La edad debe ser mayor a 19 años." });
         }
       }
 
