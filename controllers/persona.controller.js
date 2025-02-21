@@ -1,76 +1,72 @@
-const PersonaService = require("../services/persona.service");
-
+const PersonaService = require('../services/persona.service');
 class PersonaController {
-  async getAllPersonas(req, res) {
-    try {
-      const personas = await PersonaService.getAllPersonas();
-      res.status(200).json(personas);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
+    async getAllPersonas(req, res) {
+        try {
+            const personas = await PersonaService.getAllPersonas();
+            //por defecto siempre retorna 200 sino se le especifica el status
+            // 200 -> éxito | OK
+            res.status(200).json(personas);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
     }
-  }
 
-  async getPersonaById(req, res) {
-    const { id } = req.params;
-    try {
-      const persona = await PersonaService.getPersonaById(id);
-      res.status(200).json(persona);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
+    async getPersonaById(req, res) {
+        try {
+            console.log(req.params);
+            //Validar que el id venga en la petición
+            const personaId = req.params.id;
+            //QUITARLE LA NEGACIÓN de !personaId == '
+            if (!personaId || personaId == '' || personaId == null || personaId == undefined) {
+                throw new Error('El id de la persona es requerido');
+            }
+            const persona = await PersonaService.getPersonaById(personaId);
+            res.json(persona);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
     }
-  }
 
-  async getPersonaByRFC(req, res) {
-    const { rfc } = req.params;
-    try {
-      const persona = await PersonaService.getPersonaByRFC(rfc);
-      res.status(200).json(persona);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
+    async createPersona(req, res){
+        try{
+            const persona = await PersonaService.createPersona(req.body);
+            res.json(persona);
+        }catch(error){
+            res.status(400).json({message: error.message});
+        }
     }
-  }
 
-  async getPersonaByEmail(req, res) {
-    const { email } = req.params;
-    try {
-      const persona = await PersonaService.getPersonaByEmail(email);
-      res.status(200).json(persona);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
-    }
-  }
+    async updatePersona(req, res){
+        try{
+            //Validar que el id venga en la petición
+            const personaId = req.params.id;
+            if (!personaId || personaId == '' || personaId == null || personaId == undefined) {
+                throw new Error('El id de la persona es requerido');
+            }
 
-  async createPersona(req, res) {
-    const persona = req.body;
-    try {
-      const newPersona = await PersonaService.createPersona(persona);
-      res.status(201).json(newPersona);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
+            const persona = await PersonaService.updatePersona(personaId, req.body);
+            res.json(persona);
+        }catch(error){
+            res.status(400).json({message: error.message});
+        }
     }
-  }
+    async deletePersona(req, res) {
+        try {
+            const personaId = req.params.id;
+            
+            if (!personaId || personaId == '' || personaId == null || personaId == undefined) {
+                throw new Error('El id de la persona es requerido');
+            }
+    
+            const personaEliminada = await PersonaService.deletePersona(personaId);
+            res.json({ message: 'Persona eliminada correctamente', persona: personaEliminada });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+    
 
-  async updatePersona(req, res) {
-    const { id } = req.params;
-    const persona = req.body;
-    try {
-      const updatedPersona = await PersonaService.updatePersona(id, persona);
-      res.status(200).json(updatedPersona);
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
-    }
-  }
-
-  async deletePersona(req, res) {
-    const { id } = req.params;
-    try {
-      await PersonaService.deletePersona(id);
-      res.status(204).end();
-    } catch (error) {
-      res.status(error.status || 400).json({ message: error.message });
-    }
-  }
+    
 }
 
-// Exporta una instancia de la clase, no la clase en sí
 module.exports = new PersonaController();

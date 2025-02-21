@@ -5,9 +5,7 @@ const PersonaSchema = mongoose.Schema({
     apellido: {type: String, required: true},
     fechaNacimiento: {type: Date, required: true},
     rfc: {type: String, required: true, unique: true},
-    email: {type: String, required: true, unique: true},
-}, {
-    timestamps: true
-});
+    correo: {type: String, required: true, unique: true}
+})
 
 module.exports = mongoose.model('Persona', PersonaSchema);

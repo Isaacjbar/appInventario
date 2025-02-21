@@ -1,17 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const personaRoutes = require('./routes/persona.routes.js');
+const personasRoutes = require('./routes/persona.routes');
 
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
 
-// ✅ Fix: Correct route prefix
-app.use('/api', personaRoutes);
+app.use('/api/personas', personasRoutes);
 
-// ✅ Fix: Remove deprecated options
+//conexión a la base de datos
+
 mongoose.connect('mongodb+srv://Hack17prank:Hack17prank@jbar.v8wwq.mongodb.net/inventary_db?retryWrites=true&w=majority&appName=Jbar')
     .then(() => {
         console.log('Connected to the database!');
