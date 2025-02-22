@@ -1,0 +1,18 @@
+# Ignorar la carpeta node_modules
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar archivos de configuración del editor
+.vscode/
+
+# Ignorar archivos de compilación
+dist/
+build/
+
+# Ignorar archivos de pruebas
+coverage/
