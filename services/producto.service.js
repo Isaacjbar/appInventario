@@ -6,6 +6,14 @@ class ProductoService{
         return await ProductoRepository.getAllProductos();
     }
 
+    async getProductoById(id){
+        return await ProductoRepository.getProductoById(id);
+    }
+
+    async getProductoByNumSerie(numSerie){
+        return await ProductoRepository.getProductoByNumSerie(numSerie);
+    }
+
     async createProducto(producto){
         //Validar que todos los campos obligatorios vengan
         if (!producto.nombre || !producto.precio || !producto.fechaAdquisicion || !producto.numSerie) {

@@ -11,6 +11,24 @@ class ProductoController{
         }
     }
 
+    async getProductoById(req, res){
+        try{
+            const producto = await ProductoService.getProductoById(req.params.id);
+            res.json(producto);
+        }catch(error){
+            res.status(400).json({message: error.message});
+        }
+    }
+
+    async getProductoByNumSerie(req, res){
+        try{
+            const producto = await ProductoService.getProductoByNumSerie(req.params.numSerie);
+            res.json(producto);
+        }catch(error){
+            res.status(400).json({message: error.message});
+        }
+    }
+
     async createProducto(req, res){
         try{
             const producto = await ProductoService.createProducto(req.body);

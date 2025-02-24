@@ -4,8 +4,9 @@ const router = express.Router();
 
 //Obtener todos los productos
 router.get('/', ProductoController.getAllProductos);
-
-//Crear productos
 router.post('/', ProductoController.createProducto);
+
+router.get('/:id', ProductoController.getProductoById);
+router.get('/serie/:numSerie', ProductoController.getProductoByNumSerie);
 
 module.exports = router;
