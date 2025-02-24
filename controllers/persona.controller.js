@@ -50,21 +50,17 @@ class PersonaController {
             res.status(400).json({message: error.message});
         }
     }
-    async deletePersona(req, res) {
-        try {
-            const personaId = req.params.id;
-            
-            if (!personaId || personaId == '' || personaId == null || personaId == undefined) {
-                throw new Error('El id de la persona es requerido');
-            }
-    
-            const personaEliminada = await PersonaService.deletePersona(personaId);
-            res.json({ message: 'Persona eliminada correctamente', persona: personaEliminada });
-        } catch (error) {
-            res.status(400).json({ message: error.message });
+
+    async deletePersona(req, res){
+        try{
+            const persona = await PersonaService.deletePersona(req.params.id);
+            res.json(persona);
+            console.log('Persona eliminada correctamente');
+        }catch(error){
+            res.status(400).json({message: error.message})
         }
     }
-    
+
 
     
 }
