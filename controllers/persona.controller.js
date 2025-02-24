@@ -1,6 +1,9 @@
 const personaRepository = require("../repositories/persona.repository");
 const PersonaService = require("../services/persona.service");
 
+const mongoose = require('mongoose');
+
+
 class PersonaController {
 
         async getAllPersonas(req,res){
@@ -49,6 +52,7 @@ class PersonaController {
         async deletePersona(req,res){
             try {
                 const id = req.params.id;
+
                 if(!id || id === "" || id === undefined || id === null){
                     throw new Error("El id de la persona es requerido");
                 } 
