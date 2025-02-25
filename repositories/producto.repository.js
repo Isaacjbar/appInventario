@@ -36,6 +36,11 @@ class ProductoRepository {
     /*
     2025-001 | Esta es la forma en la que esta formado el numero de inventario
     */
+
+    async getProductoByNumSerieAndNotId(numSerie, id){
+        return await Producto.findOne({numSerie: numSerie, _id: {$ne: id}});
+    }
+
 }
 
 module.exports = new ProductoRepository();
