@@ -1,96 +1,85 @@
-const PersonaRepository = require('../repositories/persona.repository');
-const Validaciones = require('../utils/validation');
-const Utils = require('../utils/utils');
-class PersonaService{
-    async getAllPersonas(){
+const PersonaRepository = require("../repositories/persona.repository");
+const Validaciones = require("../utils/validation");
+const Utils = require("../utils/utils"); // Asegúrate de importar Utils si lo usas
+
+class PersonaService {
+    async getAllPersonas() {
         return await PersonaRepository.getAllPersonas();
     }
 
-    async getPersonaById(id){
-        const persona = await PersonaRepository.getPersonaById(id);
-        if(!persona){
-            throw new Error('Persona no encontrada');
+    async getPersonaById(personaId) {
+        if (!personaId || personaId.trim() === "") {
+            throw new Error("El id de la persona es requerido");
         }
-
+        const persona = await PersonaRepository.getPersonaById(personaId);
         return persona;
     }
 
-    async createPersona(persona){
-        //Validar que todos los campos obligatorios vengan
+    async createPersona(persona) {
+        // VALIDAR QUE TODOS LOS CAMPOS OBLIGATORIOS VENGAN
         if (!persona.nombre || !persona.apellido || !persona.fechaNacimiento || !persona.rfc || !persona.correo) {
-            throw new Error('Todos los campos son requeridos');
+            throw new Error("Todos los campos son requeridos");
         }
 
-        //Validar que el formato del RFC y del correo sea válido
+        // VALIDAR RFC Y CORREO
         Validaciones.validarRFC(persona.rfc);
-
         Validaciones.validarCorreo(persona.correo);
 
-        //Validar que el RFC no exista en la base de datos
+        // VALIDAR DUPLICADOS
         const personaByRFC = await PersonaRepository.getPersonaByRFC(persona.rfc);
-
-        //Validar que el correo no exista en la base de datos
         const personaByCorreo = await PersonaRepository.getPersonaByCorreo(persona.correo);
 
         if (personaByRFC) {
-            throw new Error('El RFC ya existe');
+            throw new Error("El RFC ya existe");
         }
-
         if (personaByCorreo) {
-            throw new Error('El correo ya existe');
+            throw new Error("El correo ya existe");
         }
 
-        //Validar que la fecha de nacimiento sea válida
+        // VALIDAR EDAD
         if (Utils.calcularEdad(persona.fechaNacimiento) < 18) {
-            throw new Error('La persona debe ser mayor de edad');
+            throw new Error("La persona es menor de edad");
         }
 
         return await PersonaRepository.createPersona(persona);
     }
+    async updatePersona(personaId,persona){
 
-    async updatePersona(id, persona){
-
-        //Validar que la persona exista
-        const personaById = await PersonaRepository.getPersonaById(id);
-        if (!personaById) {
-            throw new Error('Persona no encontrada');
+        // VALIDAR QUE LA PERSONA EXISTA
+        const personaById = await PersonaRepository.getPersonaById(personaId);
+        
+        if(!personaById){
+            throw new Error("La persona no existe");
         }
 
-        //Todos los campos requeridos vengan en el body
+        // VALIDAR QUE TODOS LOS CAMPOS VENGAN EN EL BODY
         if (!persona.nombre || !persona.apellido || !persona.fechaNacimiento || !persona.rfc || !persona.correo) {
-            throw new Error('Todos los campos son requeridos');
+            throw new Error("Todos los campos son requeridos");
         }
-
-        //Validar que el formato del RFC y del correo sea válido
+        // VALIDAR RFC Y CORREO
         Validaciones.validarRFC(persona.rfc);
-
         Validaciones.validarCorreo(persona.correo);
-
-        //Validar que el correo no exista en la base de datos
-        const personaByCorreoAndNotId = await PersonaRepository.getPersonaByCorreoAndNotId(id, persona.correo);
-        if (personaByCorreoAndNotId) {
-            throw new Error('El correo ya existe');
-        }
-
-        //Validar que el RFC no exista en la base de datos
-        //Que no lo tengan otras personas, que no sea la misma persona
+        // Validar que otras personas no tenga el mismo RFC
         const personaByRFCAndNotId = await PersonaRepository.getPersonaByRFCAndNotId(id, persona.rfc);
         if (personaByRFCAndNotId) {
-            throw new Error('El RFC ya existe');
-        }
-
-        //Validar que la persona sea mayor de edad
+            throw new Error("El RFC ya existe");
+        }   
+        const personaByCorreoAndNotId = await PersonaRepository.getPersonaByCorreoAndNotId(id, persona.correo);
+        if (personaByCorreoAndNotId) {
+            throw new Error("El RFC ya existe");
+        }   
+        // VALIDAR EDAD
         if (Utils.calcularEdad(persona.fechaNacimiento) < 18) {
-            throw new Error('La persona debe ser mayor de edad');
+            throw new Error("La persona es menor de edad");
         }
-
-        return await PersonaRepository.updatePersona(id, persona);
+        return await PersonaRepository.updatePersona(personaId,persona);
     }
-
-    async deletePersona(id) {
-        const persona = await PersonaRepository.getPersonaById(id);
-        if (!persona) {
-            throw new Error('Persona no encontrada.');
+    async deletePersona(id){
+        // VALIDAR QUE LA PERSONA EXISTAAAA
+        const personaById = await PersonaRepository.getPersonaById(id);
+        
+        if(!personaById){
+            throw new Error("La persona no existe");
         }
         return await PersonaRepository.deletePersona(id);
     }
